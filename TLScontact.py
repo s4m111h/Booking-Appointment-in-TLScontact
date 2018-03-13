@@ -4,7 +4,9 @@ Copyright (c) 2014 N00d1e5. All Rights Reserved.
 """
 
 #!/usr/bin/python
+import datetime
 import requests
+import signal
 import sys
 import time
 
@@ -22,10 +24,14 @@ DAY_WANT = 30  # Type the latest day of the month you want
 FORBIDDEN_WORD = 'TLScontact | Security Notice'  # Block notice
 APPOINTMENT_GOT = 'Appointment Confirmation with TLScontact'  # Appointment check
 
+signal.signal(signal.SIGINT, lambda s, f: sys.exit())
+
 s = requests.session()
 
 
 def main(username, password):
+    print("Press Ctrl+C to stop")
+
     while (1):
         if (not test_connexion()):
             if reconnect(username, password):
@@ -33,7 +39,7 @@ def main(username, password):
             else:
                 sys.exit("Connection failed.")
 
-        (month, day, hour, minute) = check_appiontement()
+        (year, month, day, hour, minute) = check_appiontement()
 
         if check_satisfait(month, day, MONTH_WANT, DAY_WANT):
             print(
@@ -90,30 +96,30 @@ def check_appiontement():
     # Are you kidding me
     if (APPOINTMENT_GOT in req.text):
         sys.exit("You have booked an appointment, call TLScontact to cancel.")
+    elif ('dispo' not in req.text):
+        sys.exit("No avaliable appointment, end of the world.")
     else:
-        (date, time) = req.text.split("<a class='dispo")[0].split(
-            "overable'>")[-1].split(" <a class='full' type='button'>")[0:]
-        (month, day) = date.split('-')[1:]
-        time = time.split('</i>')[0]
+        (date, time) = req.text.split("<a class='dispo")[0:2]
+        date = date.split("overable'>")[-1].split(" <a class=")[0]
+        time = time.split('</i></a>')[0][-8:]
+        (year, month, day) = date.split('-')
         (hour, minute) = time.split('<i>:')[0:2]
 
-        # The time got is the one before the first dispo
-        # What happened if the first dispo at 08:30, to modify
-        if (minute == '30'):
-            hour = str(int(hour) + 1).zfill(2)
-            minute = '00'
-        else:
-            minute = '30'
-        return (month, day, hour, minute)
+    return (year, month, day, hour, minute)
 
 
 # Check if the earliest satisfait you
-def check_satisfait(month, day, MONTH_WANT, DAY_WANT):
-    return ((month <= MONTH_WANT) and (day <= DAY_WANT))
+def check_satisfait(year, month, day, MONTH_WANT, DAY_WANT):
+    current_year = datetime.datetime.now().year
+    if (int(current_year) < int(year)):
+        return ((month <= (MONTH_WANT + 12)) and (day <= DAY_WANT))
+    else:
+        return ((month <= MONTH_WANT) and (day <= DAY_WANT))
 
 
 # If you say so, get it
 def get_appointment():
+    #The appointment can't be canceled by ourselves, averse to test.
     return 0
 
 

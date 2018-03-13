@@ -4,13 +4,12 @@
 
 Tested with Visa Application Centre for France in the United Kingdom.
 
-To-Do:
-- Correct if the first time in tee day available
-- Now limited only for the current year
+### To-Do:
 - Use HTML Parser in the place of split everywhere
 - Add debugger with logging package
 - Add exit message with signal package
 - Use argument in the place of code modification
 - Add booking function
+- Replace sleep with Emmm...
 
 *The appointment can't be canceled by ourselves, averse to test.*
