@@ -6,6 +6,8 @@ Tested with Visa Application Centre for France in Edinburgh and London, the Unit
 
 ## Usage:
 
+**Python3**
+
 ```
 usage: TLScontact.py [-h] [-d DELAY] [-v] login password month day
 
@@ -25,14 +27,13 @@ optional arguments:
 
 ### What's more, modify the url in code with your TLScontact application center.
 
-* Modify `TLS_EDI = '<https://fr.tlscontact.com/gb/EDI/index.php>'` with TLScontact homepage in your location
+* Modify `TLS_IND = '<https://fr.tlscontact.com/gb/EDI/index.php>'` with TLScontact homepage in your location
 * Modify `TLS_CNX = '<https://fr.tlscontact.com/gb/EDI/login.php>'` with TLScontact connexion page
 * Modify `TLS_APP = '<https://fr.tlscontact.com/gb/EDI/myapp.php>'` with My account page
 
 ## To-Do:
 
-* Use HTML Parser in the place of split everywhere
 * Add booking appointment function
 * Replace sleep with Emmm...
 
-Coded for 🍳
+_Coded for 🍳_

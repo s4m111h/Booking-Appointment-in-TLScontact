@@ -11,11 +11,12 @@ import requests
 import signal
 import sys
 import time
+from bs4 import BeautifulSoup  # sudo pip3 install beautifulsoup4 lxml
 
 __author__ = "N00d1e5"
 
 # Values to change
-TLS_EDI = 'https://fr.tlscontact.com/gb/LON/index.php'  # Homepage with location
+TLS_IND = 'https://fr.tlscontact.com/gb/LON/index.php'  # Homepage with location
 TLS_CNX = 'https://fr.tlscontact.com/gb/LON/login.php'  # Connexion page
 TLS_APP = 'https://fr.tlscontact.com/gb/LON/myapp.php'  # Application page
 
@@ -46,7 +47,8 @@ def main(username, password, delay, month_want, day_want):
         if check_satisfait(year, month, day, month_want, day_want):
             logger.info(
                 "++++++++++++++++++++\n++ GO and get it! ++\n+ %s-%s-%s %s:%s "
-                "+\n++++++++++++++++++++" % (month, day, hour, minute))
+                "+\n++++++++++++++++++++" % (year, month, day, hour, minute))
+            get_appointment(year, month, day, hour, minute)
         else:
             logger.info("Nothing with %s-%s %s:%s" %
                         (month, day, hour, minute))
@@ -60,7 +62,7 @@ def test_connexion():
     logger.debug("Testing connection")
     r = s.get(TLS_APP)
     # if conntected, we could get the application page
-    return (r.url != TLS_EDI and check_forbidden(r))
+    return (r.url != TLS_IND and check_forbidden(r))
 
 
 # Check if blocked
@@ -91,7 +93,7 @@ def authenticate(username, password, sid):
     s.post(TLS_CNX, data=payload)
     r = s.get(TLS_APP)
     is_pass = check_forbidden(r)
-    if (r.url != TLS_EDI and is_pass):
+    if (r.url != TLS_IND and is_pass):
         return True
     elif (not is_pass):
         sys.exit("Connexion blocked, increse valur DELAY in the code.")
@@ -110,11 +112,11 @@ def check_appiontement():
     elif ('dispo' not in req.text):
         sys.exit("No avaliable appointment, end of the world.")
     else:
-        (date, time) = req.text.split("<a class='dispo")[0:2]
-        date = date.split("overable'>")[-1].split(" <a class=")[0]
-        time = time.split('</i></a>')[0][-8:]
+        soup = BeautifulSoup(req.text, "lxml")
+        date = soup.find_all('a', 'dispo')[0].parent.contents[0][0:-1]
+        time = soup.find_all('a', 'dispo')[0].text
         (year, month, day) = date.split('-')
-        (hour, minute) = time.split('<i>:')[0:2]
+        (hour, minute) = time.split(':')
 
     return (year, month, day, hour, minute)
 
@@ -130,9 +132,16 @@ def check_satisfait(year, month, day, month_want, day_want):
 
 
 # If you say so, get it
-def get_appointment():
+def get_appointment(year, month, day, hour, minute):
     # The appointment can't be canceled by ourselves, averse to test.
-    return 0
+    r = s.get(TLS_APP)
+    # Get fg_id for booking appointment
+    fg_id = r.url.split('fg_id=')[-1]
+
+    TLS_GET = TLS_IND[0:-9] + "action.php?process=multiconfirm&amp;what=" + \
+        "take_appointment&amp;fg_id=" + fg_id + "&amp;result=" + \
+        year + "-" + month + "-" + day + "+" + hour + "%3A" + minute + \
+        "&amp;issuer_view=" + TLS_IND[26:28] + TLS_IND[29:32] + "2fr"
 
 
 # Action
