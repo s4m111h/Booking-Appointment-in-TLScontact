@@ -6,8 +6,6 @@ Tested with Visa Application Centre for France in Edinburgh and London, the Unit
 
 ## Usage:
 
-**Python3**
-
 ```
 usage: TLScontact.py [-h] [-d DELAY] [-v] login password month day
 
@@ -16,6 +14,8 @@ Script to check the available appointment of TLScontact.
 positional arguments:
   login                      TLScontact login (e-mail address)
   password                   TLScontact password
+  country                    The country code of your application center (gb for the UK)
+  city                       The city code of your application center (LON for London)
   month                      The latest acceptable month
   day                        The latest acceptable day
 
@@ -25,15 +25,12 @@ optional arguments:
   -v, --verbose              verbose mode
 ```
 
-### What's more, modify the url in code with your TLScontact application center.
-
-* Modify `TLS_IND = '<https://fr.tlscontact.com/gb/EDI/index.php>'` with TLScontact homepage in your location
-* Modify `TLS_CNX = '<https://fr.tlscontact.com/gb/EDI/login.php>'` with TLScontact connexion page
-* Modify `TLS_APP = '<https://fr.tlscontact.com/gb/EDI/myapp.php>'` with My account page
+*The country code and city code could be found in the TLScontact url.*
 
 ## To-Do:
 
-* Add booking appointment function
+* Check if country code and city code legal
+* Add booking appointment function (The appointment can't be canceled by ourselves, averse to test)
 * Replace sleep with Emmm...
 
 _Coded for 🍳_
