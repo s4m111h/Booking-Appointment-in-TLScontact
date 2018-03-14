@@ -10,6 +10,7 @@ import datetime
 import logging
 import requests
 import signal
+import subprocess
 import sys
 import time
 from bs4 import BeautifulSoup
@@ -56,8 +57,8 @@ def main(username, password, delay, month_want, day_want):
         if check_satisfait(year, month, day, month_want, day_want):
             logger.info(
                 "++++++++++++++++++++\n++ GO and get it! ++\n+ %s-%s-%s %s:%s "
-                "+\n++++++++++++++++++++\n" % (year, month, day, hour, minute))
-            get_appointment(year, month, day, hour, minute, req)
+                "+\n++++++++++++++++++++\n" % (year, month, day, hh, mm))
+            get_appointment(year, month, day, hh, mm, req)
         else:
             (y1, i1, j1, h1, m1, y2, i2, j2, h2,
              m2) = check_more_appiontements(req)
@@ -177,6 +178,12 @@ def get_appointment(year, month, day, hour, minute, req):
         "take_appointment&amp;fg_id=" + fg_id + "&amp;result=" + \
         year + "-" + month + "-" + day + "+" + hour + "%3A" + minute + \
         "&amp;issuer_view=" + TLS_IND[26:28] + TLS_IND[29:32] + "2fr"
+
+    # Temporary solution
+    while (1):
+        audio_file = "/System/Library/Sounds/Sosumi.aiff"
+        subprocess.call(["afplay", audio_file])
+        time.sleep(0.2)
 
 
 # Action
