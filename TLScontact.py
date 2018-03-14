@@ -63,12 +63,14 @@ def main(username, password, delay, month_want, day_want):
             (y1, i1, j1, h1, m1, y2, i2, j2, h2,
              m2) = check_more_appiontements(req)
             check_time = datetime.datetime.now()
-            logger.info("Bad luck, the first three available appointments:"
-                        "\n[1] %s-%s-%s %s:%s\n[2] %s-%s-%s %s:%s"
-                        "\n[3] %s-%s-%s %s:%s\nIf you want one of them, "
-                        "book it on the TLScontact site.\n[Checked %s:%s]\n" %
-                        (year, month, day, hh, mm, y1, i1, j1, h1, m1, y2, i2,
-                         j2, h2, m2, check_time.hour, check_time.minute))
+            logger.info(
+                "Bad luck, the first three available appointments:"
+                "\n[1] %s-%s-%s %s:%s\n[2] %s-%s-%s %s:%s"
+                "\n[3] %s-%s-%s %s:%s\nIf you want one of them, "
+                "book it on the TLScontact site.\n[Checked at %s:%s]\n" %
+                (year, month, day, hh, mm, y1, i1, j1, h1, m1, y2, i2,
+                 j2, h2, m2, str(check_time.hour).zfill(2),
+                 str(check_time.minute).zfill(2)))
 
         logger.debug("Try again in %ss.", delay)
         time.sleep(delay)
@@ -181,7 +183,7 @@ def get_appointment(year, month, day, hour, minute, req):
 
     # Temporary solution
     while (1):
-        audio_file = "/System/Library/Sounds/Sosumi.aiff"
+        audio_file = "Glass.aiff"
         subprocess.call(["afplay", audio_file])
         time.sleep(0.2)
 
