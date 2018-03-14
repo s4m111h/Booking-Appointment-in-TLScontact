@@ -32,17 +32,17 @@ s = requests.session()
 
 
 def main(username, password, delay, month_want, day_want):
-    logger.info("\nPress Ctrl+C to stop\n")
+    logger.info("\nPress Ctrl+C to stop.\n")
 
     while (1):
         if (not test_connexion()):
             if reconnect(username, password):
-                logger.info("Status: Now connected.\n")
+                logger.info("Authentication status: connected.\n")
             else:
                 sys.exit("Connection failed.")
 
         req = s.get(TLS_APP)
-        (year, month, day, hour, minute) = check_appiontement(req)
+        (year, month, day, hh, mm) = check_appiontement(req)
 
         if check_satisfait(year, month, day, month_want, day_want):
             logger.info(
@@ -52,12 +52,13 @@ def main(username, password, delay, month_want, day_want):
         else:
             (y1, i1, j1, h1, m1, y2, i2, j2, h2,
              m2) = check_more_appiontements(req)
+            check_time = datetime.datetime.now()
             logger.info("Bad luck, the first three available appointments:"
                         "\n[1] %s-%s-%s %s:%s\n[2] %s-%s-%s %s:%s"
                         "\n[3] %s-%s-%s %s:%s\nIf you want one of them, "
-                        "book them on the TLScontact site.\n" %
-                        (year, month, day, hour, minute, y1, i1, j1, h1, m1,
-                         y2, i2, j2, h2, m2))
+                        "book it on the TLScontact site.\n[Checked %s:%s]\n" %
+                        (year, month, day, hh, mm, y1, i1, j1, h1, m1, y2, i2,
+                         j2, h2, m2, check_time.hour, check_time.minute))
 
         logger.debug("Try again in %ss.", delay)
         time.sleep(delay)

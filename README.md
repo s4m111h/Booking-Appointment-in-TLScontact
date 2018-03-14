@@ -7,7 +7,7 @@ Tested with Visa Application Centre for France in Edinburgh and London, the Unit
 ## Usage:
 
 ```
-usage: TLScontact.py [-h] [-d DELAY] [-v] login password month day
+usage: TLScontact.py [-h] [-d DELAY] [-v] login password country city month day
 
 Script to check the available appointment of TLScontact.
 
@@ -30,7 +30,7 @@ optional arguments:
 ## To-Do:
 
 * Check if country code and city code legal
-* Add booking appointment function (The appointment can't be canceled by ourselves, averse to test)
-* Replace sleep with Emmm...
+* Add booking appointment function (the appointment can't be canceled by ourselves, averse to test)
+* Replace sleep with Emmm for saving CPU...
 
-_Coded for 🍳_
+_Coded for 🍳🍳_
