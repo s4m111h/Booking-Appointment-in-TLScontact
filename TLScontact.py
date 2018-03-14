@@ -21,6 +21,13 @@ CNX = '/login.php'  # Connexion page
 APP = '/myapp.php'  # Application page
 FORBIDDEN_WORD = 'TLScontact | Security Notice'  # Block notice
 APPOINTMENT_GOT = 'Appointment Confirmation with TLScontact'  # Appointment check
+LIST_CONTURY_CITY = [
+    'dz', ['ALG', 'ORN', 'AAE'], 'cn', [
+        'BJS', 'TNA', 'XIY', 'SHA', 'HGH', 'NKG', 'CAN', 'SZX', 'FOC', 'CNG',
+        'CKG', 'KMG', 'WUH', 'CSX', 'SHE'
+    ], 'eg', ['CAI', 'ALY'], 'id', ['JKT'], 'lb', ['BEY'], 'th', ['BKK'], 'gb',
+    ['LON', 'EDI'], 'uz', ['TAS'], 'vn', ['HAN', 'SGN']
+]
 
 signal.signal(signal.SIGINT, lambda s, f: sys.exit())
 
@@ -196,6 +203,13 @@ if __name__ == '__main__':  # execute only if run as a script
 
     if args.verbose:
         logger.setLevel(logging.DEBUG)
+
+    if (LIST_CONTURY_CITY.count(args.country.lower()) != 1
+            or LIST_CONTURY_CITY[1 + LIST_CONTURY_CITY.index(
+                args.country.lower())].count(args.city.upper()) != 1):
+        sys.exit(
+            "Check your contry code and city code, please input valid code or contact me to update."
+        )
 
     if (((type(args.day) == int and 0 < args.day <= 31) or
          (type(args.day) == str and 0 < len(args.day) <= 2
