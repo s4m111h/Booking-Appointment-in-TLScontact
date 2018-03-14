@@ -15,9 +15,9 @@ import time
 __author__ = "N00d1e5"
 
 # Values to change
-TLS_EDI = 'https://fr.tlscontact.com/gb/EDI/index.php'  # Homepage with location
-TLS_CNX = 'https://fr.tlscontact.com/gb/EDI/login.php'  # Connexion page
-TLS_APP = 'https://fr.tlscontact.com/gb/EDI/myapp.php'  # Application page
+TLS_EDI = 'https://fr.tlscontact.com/gb/LON/index.php'  # Homepage with location
+TLS_CNX = 'https://fr.tlscontact.com/gb/LON/login.php'  # Connexion page
+TLS_APP = 'https://fr.tlscontact.com/gb/LON/myapp.php'  # Application page
 
 FORBIDDEN_WORD = 'TLScontact | Security Notice'  # Block notice
 APPOINTMENT_GOT = 'Appointment Confirmation with TLScontact'  # Appointment check
@@ -43,7 +43,7 @@ def main(username, password, delay, month_want, day_want):
 
         (year, month, day, hour, minute) = check_appiontement()
 
-        if check_satisfait(month, day, month_want, day_want):
+        if check_satisfait(year, month, day, month_want, day_want):
             logger.info(
                 "++++++++++++++++++++\n++ GO and get it! ++\n+ %s-%s-%s %s:%s "
                 "+\n++++++++++++++++++++" % (month, day, hour, minute))

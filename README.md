@@ -1,8 +1,8 @@
 # Booking Appointment in TLScontact
 
-** A simple script to check the available appointment of TLScontact. **
+**A simple script to check the available appointment of TLScontact.**
 
-Tested with Visa Application Centre for France in Edinburgh, the United Kingdom.
+Tested with Visa Application Centre for France in Edinburgh and London, the United Kingdom.
 
 ## Usage:
 
