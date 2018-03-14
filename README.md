@@ -29,7 +29,6 @@ optional arguments:
 
 ## To-Do:
 
-* Check if the "before booking stuff" done
 * Add booking appointment function (the appointment can't be canceled by ourselves, averse to test)
 * Replace sleep with Emmm for saving CPU...
 

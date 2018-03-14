@@ -1,9 +1,10 @@
 """
 A simple script to check the available appointment of TLScontact.
-Copyright (c) 2014 N00d1e5. All Rights Reserved.
+Copyright (c) 2018 N00d1e5. All Rights Reserved.
 """
 
 #!/usr/bin/python
+
 import argparse
 import datetime
 import logging
@@ -11,7 +12,7 @@ import requests
 import signal
 import sys
 import time
-from bs4 import BeautifulSoup  # sudo pip3 install beautifulsoup4 lxml
+from bs4 import BeautifulSoup
 
 __author__ = "N00d1e5"
 
@@ -21,13 +22,14 @@ CNX = '/login.php'  # Connexion page
 APP = '/myapp.php'  # Application page
 FORBIDDEN_WORD = 'TLScontact | Security Notice'  # Block notice
 APPOINTMENT_GOT = 'Appointment Confirmation with TLScontact'  # Appointment check
+PREPERE_STUFF = 'map to access TLScontact'
 LIST_CONTURY_CITY = [
     'dz', ['ALG', 'ORN', 'AAE'], 'cn', [
         'BJS', 'TNA', 'XIY', 'SHA', 'HGH', 'NKG', 'CAN', 'SZX', 'FOC', 'CNG',
         'CKG', 'KMG', 'WUH', 'CSX', 'SHE'
     ], 'eg', ['CAI', 'ALY'], 'id', ['JKT'], 'lb', ['BEY'], 'th', ['BKK'], 'gb',
     ['LON', 'EDI'], 'uz', ['TAS'], 'vn', ['HAN', 'SGN']
-]
+]  # source from https://fr.tlscontact.com/
 
 signal.signal(signal.SIGINT, lambda s, f: sys.exit())
 
@@ -126,6 +128,8 @@ def check_appiontement(req):
     # Are you kidding me
     if (APPOINTMENT_GOT in req.text):
         sys.exit("You have booked an appointment, call TLScontact to cancel.")
+    elif ((PREPERE_STUFF not in req.text)):
+        sys.exit("You have to finish to step 1 and 2 in the application.")
     elif ('dispo' not in req.text):
         sys.exit("No avaliable appointment, end of the world.")
     else:
