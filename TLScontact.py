@@ -15,6 +15,12 @@ import sys
 import time
 from bs4 import BeautifulSoup
 
+import smtplib
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
+from email import encoders
+from email.header import Header
+
 __author__ = "N00d1e5"
 
 TLS = 'https://fr.tlscontact.com/'  # Main part of url
@@ -62,7 +68,8 @@ def main(username, password, delay, month_want, day_want):
             logger.info(
                 "++++++++++++++++++++\n++ GO and get it! ++\n+ %s-%s-%s %s:%s "
                 "+\n++++++++++++++++++++\n" % (year, month, day, hh, mm))
-            get_appointment(year, month, day, hh, mm, req)
+            # get_appointment(year, month, day, hh, mm, req)
+            tmp_solution(year, month, day, hour, minute)
         else:
             (y1, i1, j1, h1, m1, y2, i2, j2, h2,
              m2) = check_more_appiontements(req)
@@ -189,13 +196,23 @@ def check_satisfait(year, month, day, month_want, day_want):
         return ((month <= month_want) and (int(day) <= int(day_want)))
 
 
-# # If you say so, get it
-# def get_appointment(year, month, day, hour, minute, req):#
-#     # Temporary solution
-#     while (1):
-#         audio_file = "Glass.aiff"
-#         subprocess.call(["afplay", audio_file])
-#         time.sleep(0.2)
+# Temporary solution, maybe in spam
+def tmp_solution(year, month, day, hour, minute):
+    user = 'n00d1e5@sina.cn'
+    pwd = 'n00d1e5'
+    to = ['n00d1e5@n00d1e5.n00d1e5']
+    msg = MIMEMultipart()
+    msg['Subject'] = Header('Go booking the appointment', 'utf-8')
+    msg['From'] = Header(user)
+
+    text = year + '-' + month + '-' + day + ' ' + hour + ':' + minute
+    content1 = MIMEText(text, 'plain', 'utf-8')
+    msg.attach(content1)
+
+    s = smtplib.SMTP('smtp.sina.cn')
+    s.login(user, pwd)
+    s.sendmail(user, to, msg.as_string())
+    s.close()
 
 
 # If you say so, get it
@@ -240,7 +257,7 @@ def get_appointment(year, month, day, hour, minute, req):
         'process': 'multiconfirm',
         'reloader_timestamp': time_post
     }
-
+    time.sleep(2)
     s.post(TLS_CONFIRME, data=payload_bis)
 
     req = s.get(TLS_APP)
