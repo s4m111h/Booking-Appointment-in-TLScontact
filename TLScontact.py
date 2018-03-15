@@ -32,6 +32,9 @@ LIST_CONTURY_CITY = [
     ], 'eg', ['CAI', 'ALY'], 'id', ['JKT'], 'lb', ['BEY'], 'th', ['BKK'], 'gb',
     ['LON', 'EDI'], 'uz', ['TAS'], 'vn', ['HAN', 'SGN']
 ]  # source from https://fr.tlscontact.com/
+week = [
+    'Monday', 'Tuesday', 'Wednesday', 'Thurday', 'Friday', 'Saturday', 'Sunday'
+]
 
 signal.signal(signal.SIGINT, lambda s, f: sys.exit())
 
@@ -61,10 +64,6 @@ def main(username, password, delay, month_want, day_want):
                 "+\n++++++++++++++++++++\n" % (year, month, day, hh, mm))
             get_appointment(year, month, day, hh, mm, req)
         else:
-            week = [
-                'Monday', 'Tuesday', 'Wednesday', 'Thurday', 'Friday',
-                'Saturday', 'Sunday'
-            ]
             (y1, i1, j1, h1, m1, y2, i2, j2, h2,
              m2) = check_more_appiontements(req)
             check_time = datetime.datetime.now()
@@ -190,20 +189,66 @@ def check_satisfait(year, month, day, month_want, day_want):
         return ((month <= month_want) and (int(day) <= int(day_want)))
 
 
+# # If you say so, get it
+# def get_appointment(year, month, day, hour, minute, req):#
+#     # Temporary solution
+#     while (1):
+#         audio_file = "Glass.aiff"
+#         subprocess.call(["afplay", audio_file])
+#         time.sleep(0.2)
+
+
 # If you say so, get it
 def get_appointment(year, month, day, hour, minute, req):
-    fg_id = req.url.split('fg_id=')[-1]  # Get fg_id for booking appointment
+    TLS_BOOK = TLS + args.country.lower() + '/' + args.city.upper(
+    ) + '/ajax/confirm_action.php'
+    TLS_CONFIRME = TLS + args.country.lower() + '/' + args.city.upper(
+    ) + '/action.php'
 
-    TLS_GET = TLS_IND[0:-9] + "action.php?process=multiconfirm&amp;what=" + \
-        "take_appointment&amp;fg_id=" + fg_id + "&amp;result=" + \
-        year + "-" + month + "-" + day + "+" + hour + "%3A" + minute + \
-        "&amp;issuer_view=" + TLS_IND[26:28] + TLS_IND[29:32] + "2fr"
+    #need by payload
+    url = 'https%3A%2F%2Ffr.tlscontact.com%2F' + args.country.lower(
+    ) + '%2F' + args.city.upper() + "%2Faction.php%3Fprocess%3Dmulticonfirm"
+    fg_id = req.url.split('fg_id=')[-1]
+    goal1 = year + '-' + month + '-' + day + '%2B' + hour + '%253A' + minute
+    goal2 = year + '-' + month + '-' + day + '%20' + hour + '%253A' + minute
+    issuer_view = args.country.lower() + args.city.upper() + "2fr"
+    time_post = int(time.time() * 1000)
+    sid = req.text.split('var secret_id = "')[1].split('";')[0]
 
-    # Temporary solution
-    while (1):
-        audio_file = "Glass.aiff"
-        subprocess.call(["afplay", audio_file])
-        time.sleep(0.2)
+    url = url + '%26what%3Dtake_appointment%26fg_id%3D' + fg_id + \
+          '%26result%3D' + goal1 + '%26issuer_view%3D' + issuer_view
+
+    payload = {
+        'url': url,
+        'issuer_view': '',
+        'target': 'ajax_form_status',
+        'time': time_post,
+        '_sid': sid
+    }
+
+    s.post(TLS_BOOK, data=payload)
+
+    time_post = int(time.time() * 1000)
+    payload_bis = {
+        'f_id': '',
+        'fg_id': fg_id,
+        'what': 'take_appointment',
+        'result': goal2,
+        'as_u_id': '',
+        '_sid': sid,
+        'process': 'multiconfirm',
+        'reloader_timestamp': time_post
+    }
+
+    s.post(TLS_CONFIRME, data=payload_bis)
+
+    req = s.get(TLS_APP)
+    if (APPOINTMENT_GOT in req.text):
+        w = week[datetime.date(int(year), int(month), int(day)).weekday()]
+        sys.exit("Success, appointment on %s-%s-%s %s:%s %s" %
+                 (year, month, day, hour, minute, w))
+    else:
+        sys.exit("Something wrong, my fault...")
 
 
 # Action
