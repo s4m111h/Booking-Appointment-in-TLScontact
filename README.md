@@ -25,11 +25,11 @@ optional arguments:
   -v, --verbose              verbose mode
 ```
 
-*The country code and city code could be found in the TLScontact url.*
+_The country code and city code could be found in the TLScontact url._
 
 ## To-Do:
 
 * Add booking appointment function (the appointment can't be canceled by ourselves, averse to test)
-* Replace sleep with Emmm for saving CPU...
+* Class and pyc
 
 _Coded for 🍳🍳_

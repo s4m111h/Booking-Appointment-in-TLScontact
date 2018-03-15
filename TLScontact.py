@@ -205,12 +205,12 @@ def get_appointment(year, month, day, hour, minute, req):
     TLS_CONFIRME = TLS + args.country.lower() + '/' + args.city.upper(
     ) + '/action.php'
 
-    #need by payload
+    # Need by payload
     url = 'https%3A%2F%2Ffr.tlscontact.com%2F' + args.country.lower(
     ) + '%2F' + args.city.upper() + "%2Faction.php%3Fprocess%3Dmulticonfirm"
     fg_id = req.url.split('fg_id=')[-1]
     goal1 = year + '-' + month + '-' + day + '%2B' + hour + '%253A' + minute
-    goal2 = year + '-' + month + '-' + day + '%20' + hour + '%253A' + minute
+    goal2 = year + '-' + month + '-' + day + '%20' + hour + '%3A' + minute
     issuer_view = args.country.lower() + args.city.upper() + "2fr"
     time_post = int(time.time() * 1000)
     sid = req.text.split('var secret_id = "')[1].split('";')[0]
@@ -229,6 +229,7 @@ def get_appointment(year, month, day, hour, minute, req):
     s.post(TLS_BOOK, data=payload)
 
     time_post = int(time.time() * 1000)
+
     payload_bis = {
         'f_id': '',
         'fg_id': fg_id,
