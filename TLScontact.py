@@ -22,6 +22,7 @@ IND = '/index.php'  # Homepage with location
 CNX = '/login.php'  # Connexion page
 APP = '/myapp.php'  # Application page
 FORBIDDEN_WORD = 'TLScontact | Security Notice'  # Block notice
+BLOCK_WORD = 'Please try connecting again later.'  # Block notice
 APPOINTMENT_GOT = 'Appointment Confirmation with TLScontact'  # Appointment check
 PREPERE_STUFF = 'map to access TLScontact'
 LIST_CONTURY_CITY = [
@@ -60,16 +61,23 @@ def main(username, password, delay, month_want, day_want):
                 "+\n++++++++++++++++++++\n" % (year, month, day, hh, mm))
             get_appointment(year, month, day, hh, mm, req)
         else:
+            week = [
+                'Monday', 'Tuesday', 'Wednesday', 'Thurday', 'Friday',
+                'Saturday', 'Sunday'
+            ]
             (y1, i1, j1, h1, m1, y2, i2, j2, h2,
              m2) = check_more_appiontements(req)
             check_time = datetime.datetime.now()
+            w0 = week[datetime.date(int(year), int(month), int(day)).weekday()]
+            w1 = week[datetime.date(int(y1), int(i1), int(j1)).weekday()]
+            w2 = week[datetime.date(int(y2), int(i2), int(j2)).weekday()]
             logger.info(
                 "Bad luck, the first three available appointments:"
-                "\n[1] %s-%s-%s %s:%s\n[2] %s-%s-%s %s:%s"
-                "\n[3] %s-%s-%s %s:%s\nIf you want one of them, "
+                "\n[1] %s-%s-%s %s:%s %s\n[2] %s-%s-%s %s:%s %s"
+                "\n[3] %s-%s-%s %s:%s %s\nIf you want one of them, "
                 "book it on the TLScontact site.\n[Checked at %s:%s]\n" %
-                (year, month, day, hh, mm, y1, i1, j1, h1, m1, y2, i2,
-                 j2, h2, m2, str(check_time.hour).zfill(2),
+                (year, month, day, hh, mm, w0, y1, i1, j1, h1, m1, w1, y2, i2,
+                 j2, h2, m2, w2, str(check_time.hour).zfill(2),
                  str(check_time.minute).zfill(2)))
 
         logger.debug("Try again in %ss.", delay)
@@ -80,14 +88,24 @@ def main(username, password, delay, month_want, day_want):
 def test_connexion():
     logger.debug("Testing connection")
     r = s.get(TLS_APP)
+    check_forbidden(r)
     # if conntected, we could get the application page
-    return (r.url != TLS_IND and check_forbidden(r))
+    return (r.url != TLS_IND)
 
 
 # Check if blocked
 def check_forbidden(r):
     logger.debug("Testing if connexion blocked")
-    return (FORBIDDEN_WORD not in r.text)
+    if ((FORBIDDEN_WORD in r.text) or (BLOCK_WORD in r.text)):
+        sys.exit("Connexion blocked, please try again later.")
+    else:
+        return True
+
+
+# Check if blocked
+def check_block(r):
+    logger.debug("Testing if connexion blocked")
+    return ((BLOCK_WORD not in r.text))
 
 
 # Reconnect in case of disconnection
