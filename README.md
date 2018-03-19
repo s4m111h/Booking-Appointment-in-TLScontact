@@ -27,9 +27,11 @@ optional arguments:
 
 _The country code and city code could be found in the TLScontact url._
 
+_For now, the code could not book appointment, but send a mail as notification. Modify the valor in tmp_solution._
+
 ## To-Do:
 
-* Add booking appointment function (the appointment can't be canceled by ourselves, averse to test)
-* Class and pyc
+* Repair booking appointment function (the appointment can't be canceled by ourselves, averse to test)
+* Use Python class
 
 _Coded for 🍳🍳_

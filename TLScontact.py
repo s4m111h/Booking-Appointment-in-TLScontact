@@ -69,7 +69,7 @@ def main(username, password, delay, month_want, day_want):
                 "++++++++++++++++++++\n++ GO and get it! ++\n+ %s-%s-%s %s:%s "
                 "+\n++++++++++++++++++++\n" % (year, month, day, hh, mm))
             # get_appointment(year, month, day, hh, mm, req)
-            tmp_solution(year, month, day, hour, minute)
+            tmp_solution(year, month, day, hh, mm)
         else:
             (y1, i1, j1, h1, m1, y2, i2, j2, h2,
              m2) = check_more_appiontements(req)
@@ -198,21 +198,22 @@ def check_satisfait(year, month, day, month_want, day_want):
 
 # Temporary solution, maybe in spam
 def tmp_solution(year, month, day, hour, minute):
-    user = 'n00d1e5@sina.cn'
-    pwd = 'n00d1e5'
-    to = ['n00d1e5@n00d1e5.n00d1e5']
+    user = 'sinamail@sina.cn'  # Suggest to use mail.sina.cn
+    pwd = 'password of sina mail'  # Password of sina mail
+    to = ['destination mail address']  # Destination mail address
     msg = MIMEMultipart()
     msg['Subject'] = Header('Go booking the appointment', 'utf-8')
     msg['From'] = Header(user)
 
     text = year + '-' + month + '-' + day + ' ' + hour + ':' + minute
-    content1 = MIMEText(text, 'plain', 'utf-8')
+    content1 = MIMEText((text + '\n' + TLS_APP), 'plain', 'utf-8')
     msg.attach(content1)
 
-    s = smtplib.SMTP('smtp.sina.cn')
+    s = smtplib.SMTP('smtp.sina.cn')  # SMTP server of sina mail
     s.login(user, pwd)
     s.sendmail(user, to, msg.as_string())
     s.close()
+    sys.exit("Go: %s" % (TLS_APP))
 
 
 # If you say so, get it
@@ -233,7 +234,7 @@ def get_appointment(year, month, day, hour, minute, req):
     sid = req.text.split('var secret_id = "')[1].split('";')[0]
 
     url = url + '%26what%3Dtake_appointment%26fg_id%3D' + fg_id + \
-          '%26result%3D' + goal1 + '%26issuer_view%3D' + issuer_view
+        '%26result%3D' + goal1 + '%26issuer_view%3D' + issuer_view
 
     payload = {
         'url': url,
