@@ -190,17 +190,29 @@ def check_more_appiontements(req):
 def check_satisfait(year, month, day, month_want, day_want):
     logger.debug("Checking if satisfait the deadline")
     current_year = datetime.datetime.now().year
-    if (int(current_year) < int(year)):
-        return ((month <= (month_want + 12)) and (int(day) <= int(day_want)))
+    if (int(current_year) == int(year)):
+        if (month < month_want):
+            return True
+        elif (month == month_want):
+            return (int(day) <= int(day_want))
+        else:
+            return False
+    elif (int(current_year) < int(year)):
+        if (month == month_want):
+            return (int(day) <= int(day_want))
+        elif (month < (month_want + 12)):
+            return True
+        else:
+            return False
     else:
-        return ((month <= month_want) and (int(day) <= int(day_want)))
+        return False
 
 
 # Temporary solution, maybe in spam
 def tmp_solution(year, month, day, hour, minute):
-    user = 'sinamail@sina.cn'  # Suggest to use mail.sina.cn
-    pwd = 'password of sina mail'  # Password of sina mail
-    to = ['destination mail address']  # Destination mail address
+    user = 'n00d1e5@sina.cn'  # Suggest to use mail.sina.cn
+    pwd = 'p455w0rd'  # Password of sina mail
+    to = ['n00d1e5@n00d1e5.com']  # Destination mail address
     msg = MIMEMultipart()
     msg['Subject'] = Header('Go booking the appointment', 'utf-8')
     msg['From'] = Header(user)
