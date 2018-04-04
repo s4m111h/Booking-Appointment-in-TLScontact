@@ -68,8 +68,8 @@ def main(username, password, delay, month_want, day_want):
             logger.info(
                 "++++++++++++++++++++\n++ GO and get it! ++\n+ %s-%s-%s %s:%s "
                 "+\n++++++++++++++++++++\n" % (year, month, day, hh, mm))
-            # get_appointment(year, month, day, hh, mm, req)
-            tmp_solution(year, month, day, hh, mm)
+            get_appointment(year, month, day, hh, mm, req)
+            # tmp_solution(year, month, day, hh, mm)
         else:
             (y1, i1, j1, h1, m1, y2, i2, j2, h2,
              m2) = check_more_appiontements(req)
@@ -137,7 +137,8 @@ def authenticate(username, password, sid):
         'email': username,
         'pwd': password
     }
-    s.post(TLS_CNX, data=payload)
+    yoyo = s.post(TLS_CNX, data=payload)
+    print(yoyo)
     r = s.get(TLS_APP)
     is_pass = check_forbidden(r)
     if (r.url != TLS_IND and is_pass):
@@ -235,6 +236,9 @@ def get_appointment(year, month, day, hour, minute, req):
     TLS_CONFIRME = TLS + args.country.lower() + '/' + args.city.upper(
     ) + '/action.php'
 
+
+# Cookie: TLScontact=6938634c49496285f100a442bfc0bfeb; uid=CltUFlqnltpsLEkVAxjkAg==; _ga=GA1.2.1817954449.1520936367; TLScontact=929c338e8fa2718ac34546461d7b9c4b
+
     # Need by payload
     url = 'https%3A%2F%2Ffr.tlscontact.com%2F' + args.country.lower(
     ) + '%2F' + args.city.upper() + "%2Faction.php%3Fprocess%3Dmulticonfirm"
@@ -242,11 +246,26 @@ def get_appointment(year, month, day, hour, minute, req):
     goal1 = year + '-' + month + '-' + day + '%2B' + hour + '%253A' + minute
     goal2 = year + '-' + month + '-' + day + '%20' + hour + '%3A' + minute
     issuer_view = args.country.lower() + args.city.upper() + "2fr"
-    time_post = int(time.time() * 1000)
+    time_post = str(int(time.time() * 1000))
     sid = req.text.split('var secret_id = "')[1].split('";')[0]
 
     url = url + '%26what%3Dtake_appointment%26fg_id%3D' + fg_id + \
         '%26result%3D' + goal1 + '%26issuer_view%3D' + issuer_view
+
+    my_header = {
+        'Host': 'fr.tlscontact.com',
+        'Agent': 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:59.0) Gecko/20100101 Firefox/59.0',
+        'Accept': 'text/javascript, text/html, application/xml, text/xml, */*',
+        'Accept-Language': 'en-US,en;q=0.5',
+        'Accept-Encoding': 'gzip, deflate',
+        'Referer': (TLS_APP + '?fg_id=' + fg_id),
+        'X-Requested-With': 'XMLHttpRequest',
+        'X-Prototype-Version': '1.7',
+        'Content-type': 'application/x-www-form-urlencoded; charset=UTF-8',
+        'Content-Length': '281',
+        # 'Cookie': '',
+        'Connection': 'close'
+    }
 
     payload = {
         'url': url,
@@ -255,10 +274,10 @@ def get_appointment(year, month, day, hour, minute, req):
         'time': time_post,
         '_sid': sid
     }
-
-    s.post(TLS_BOOK, data=payload)
-
-    time_post = int(time.time() * 1000)
+    print("1:\n%s\n" % payload)
+    r1 = s.post(TLS_BOOK, data=payload, headers=my_header)
+    print(r1.text)
+    time_post = str(int(time.time() * 1000))
 
     payload_bis = {
         'f_id': '',
@@ -270,9 +289,11 @@ def get_appointment(year, month, day, hour, minute, req):
         'process': 'multiconfirm',
         'reloader_timestamp': time_post
     }
-    time.sleep(2)
-    s.post(TLS_CONFIRME, data=payload_bis)
-
+    time.sleep(3)
+    print("2:\n%s\n" % payload_bis)
+    # r2 = s.post(TLS_CONFIRME, data=payload_bis)
+    # print(r2.text)
+    time.sleep(3)
     req = s.get(TLS_APP)
     if (APPOINTMENT_GOT in req.text):
         w = week[datetime.date(int(year), int(month), int(day)).weekday()]
